@@ -55,13 +55,23 @@ Welcome! predict your expected **medical insurance charges** by entering the det
 st.subheader("🔎 Personal & Lifestyle Information")
 
 with st.container():
-    # START the styled box
     st.markdown(
-        '<div style="border: 2px solid #ccc; background-color: #f9f9f9; border-radius: 10px; padding: 20px;">',
+        """
+        <style>
+        .styled-box {
+            border: 2px solid #ccc;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        </style>
+        <div class="styled-box">
+        """,
         unsafe_allow_html=True
     )
 
-    # Input fields
+    # Input fields go here
     age = st.number_input("🎂 Age", min_value=1, max_value=120, value=30)
     sex = st.radio("👤 Sex", options=["male", "female"], horizontal=True)
     bmi = st.number_input("⚖️ BMI (Body Mass Index)", min_value=10.0, max_value=50.0, value=25.0)
@@ -69,8 +79,9 @@ with st.container():
     smoker = st.selectbox("🚬 Do you smoke?", ["yes", "no"])
     region = st.selectbox("🌎 Region", ["southwest", "southeast", "northwest", "northeast"])
 
-    # END the styled box
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Close the div
+    st.markdown("</div>", unsafe_allow_html=True)
+
 
 
 # Prediction section
