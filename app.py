@@ -7,7 +7,7 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import LabelEncoder
 from sklearn.model_selection import train_test_split
 
-# Train model with caching to improve performance
+# Train model with caching
 @st.cache_data
 def train_model():
     df = pd.read_csv("Insurancepredc.csv")
@@ -43,37 +43,32 @@ st.set_page_config(page_title="💰 Insurance Cost Predictor", layout="centered"
 # Title and intro
 st.title("🏥 Medical Insurance Cost Predictor")
 
-# Moving banner at the top
+# Moving banner
 st.markdown("""
 <marquee behavior="scroll" direction="left" scrollamount="8" style="background-color: #f0f8ff; color: #00008b; padding: 10px; font-size: 20px; font-weight: bold; border-radius: 10px;">
-Welcome! predict your expected **medical insurance charges** by entering the details below. Stay Healthy, Stay Informed 💪
+Welcome! Predict your expected **medical insurance charges** by entering the details below. Stay Healthy, Stay Informed 💪
 </marquee>
 """, unsafe_allow_html=True)
 
-
-# Input section in an outlined box
+# Input form
 with st.form("prediction_form", clear_on_submit=False):
-    st.markdown("""
-        <div style='border: 2px solid #4B8BBE; padding: 20px; border-radius: 10px; background-color: #f9f9f9;'>
-    """, unsafe_allow_html=True)
+    st.markdown("""<div style='border: 2px solid #4B8BBE; padding: 20px; border-radius: 10px; background-color: #f9f9f9;'>""", unsafe_allow_html=True)
 
     st.subheader("🧾 Enter Personal Information")
 
     age = st.slider("🎂 Age", 18, 100, 30)
     bmi = st.number_input("⚖️ BMI", min_value=10.0, max_value=50.0, value=25.0)
     children = st.number_input("👶 Number of Children", min_value=0, max_value=10, step=1)
-
     sex = st.radio("🧑 Sex", ['Male', 'Female'], horizontal=True)
     smoker = st.radio("🚬 Smoker", ['Yes', 'No'], horizontal=True)
+    region = st.selectbox("🌍 Region", ['southwest', 'southeast', 'northwest', 'northeast'])
 
     st.markdown("</div>", unsafe_allow_html=True)
 
     submit = st.form_submit_button("🔍 Estimate Charges")
 
-
-
-# Prediction section
-if st.button("🔮 Predict Insurance Charges"):
+# Prediction
+if submit:
     # Encode inputs
     sex_encoded = le_sex.transform([sex])[0]
     smoker_encoded = le_smoker.transform([smoker])[0]
@@ -84,7 +79,7 @@ if st.button("🔮 Predict Insurance Charges"):
 
     st.success(f"💸 Estimated Insurance Cost: ₹{predicted_charge:,.2f}")
 
-    if smoker == "yes":
+    if smoker.lower() == "yes":
         st.warning("🚭 Tip: Quitting smoking can help lower your insurance costs and improve your health!")
     else:
         st.info("👏 Awesome! Being a non-smoker helps reduce your medical risks and insurance charges!")
