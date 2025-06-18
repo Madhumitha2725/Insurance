@@ -52,8 +52,7 @@ Welcome! Predict your expected **medical insurance charges** by entering the det
 
 # Input form
 with st.form("prediction_form", clear_on_submit=False):
-    st.markdown("""<div style='border: 2px solid #4B8BBE; padding: 20px; border-radius: 10px; background-color: #f9f9f9;'>""", unsafe_allow_html=True)
-
+   
     st.subheader("🧾 Enter Personal Information")
 
     age = st.slider("🎂 Age", 18, 100, 30)
@@ -63,7 +62,7 @@ with st.form("prediction_form", clear_on_submit=False):
     smoker = st.radio("🚬 Smoker", ['Yes', 'No'], horizontal=True)
     region = st.selectbox("🌍 Region", ['southwest', 'southeast', 'northwest', 'northeast'])
 
-    st.markdown("</div>", unsafe_allow_html=True)
+
 
     submit = st.form_submit_button("🔍 Estimate Charges")
 
