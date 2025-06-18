@@ -39,31 +39,34 @@ model, le_sex, le_smoker, le_region = train_model()
 
 # Streamlit page config
 st.set_page_config(page_title="💰 Insurance Cost Predictor", layout="centered")
+
+# Moving banner at the top
+st.markdown("""
+<marquee behavior="scroll" direction="left" scrollamount="8" style="background-color: #f0f8ff; color: #00008b; padding: 10px; font-size: 20px; font-weight: bold; border-radius: 10px;">
+Welcome to the Medical Insurance Cost Predictor 💡 Stay Healthy, Stay Informed 💪
+</marquee>
+""", unsafe_allow_html=True)
+
+# Title and intro
 st.title("🏥 Medical Insurance Cost Predictor")
 st.markdown("Predict your expected **medical insurance charges** by entering the details below.")
 
-# Input UI - stacked vertically
+# Input section in an outlined box
 st.subheader("🔎 Personal & Lifestyle Information")
 
-age = st.slider("🎂 Age", 18, 100, 30)
-sex = st.radio("👤 Sex", options=["male", "female"])
-bmi = st.slider("⚖️ BMI (Body Mass Index)", 10.0, 50.0, 25.0)
-children = st.slider("👶 Number of Children", 0, 10, 0)
-smoker = st.selectbox("🚬 Do you smoke?", ["yes", "no"])
-region = st.selectbox("🌎 Region", ["southwest", "southeast", "northwest", "northeast"])
+with st.container():
+    st.markdown('<div style="border: 2px solid #ccc; border-radius: 10px; padding: 20px;">', unsafe_allow_html=True)
 
-# BMI Health Feedback
-st.subheader("📊 BMI Category")
-if bmi < 18.5:
-    st.warning("📉 Underweight")
-elif 18.5 <= bmi < 25:
-    st.success("✅ Normal")
-elif 25 <= bmi < 30:
-    st.info("⚠️ Overweight")
-else:
-    st.error("❗ Obese - High health risk")
+    age = st.number_input("🎂 Age", min_value=1, max_value=120, value=30)
+    sex = st.radio("👤 Sex", options=["male", "female"], horizontal=True)
+    bmi = st.number_input("⚖️ BMI (Body Mass Index)", min_value=10.0, max_value=50.0, value=25.0)
+    children = st.slider("👶 Number of Children", 0, 10, 0)
+    smoker = st.selectbox("🚬 Do you smoke?", ["yes", "no"])
+    region = st.selectbox("🌎 Region", ["southwest", "southeast", "northwest", "northeast"])
 
-# Predict button
+    st.markdown('</div>', unsafe_allow_html=True)
+
+# Prediction section
 if st.button("🔮 Predict Insurance Charges"):
     # Encode inputs
     sex_encoded = le_sex.transform([sex])[0]
@@ -73,45 +76,13 @@ if st.button("🔮 Predict Insurance Charges"):
     input_data = np.array([[age, sex_encoded, bmi, children, smoker_encoded, region_encoded]])
     predicted_charge = model.predict(input_data)[0]
 
-    # Show result
     st.success(f"💸 Estimated Insurance Cost: ₹{predicted_charge:,.2f}")
 
-    # Tip if smoker
     if smoker == "yes":
-        st.warning("💡 Tip: Quitting smoking can help lower your insurance costs!")
-
-    # Summary
-    st.subheader("📋 Summary of Your Inputs")
-    st.markdown(f"- Age: **{age}**")
-    st.markdown(f"- Sex: **{sex}**")
-    st.markdown(f"- BMI: **{bmi}**")
-    st.markdown(f"- Number of Children: **{children}**")
-    st.markdown(f"- Smoker: **{smoker}**")
-    st.markdown(f"- Region: **{region}**")
-
-    # Chart - Compare with average
-    avg_cost = 13200  # You can update this based on your dataset
-    df = pd.DataFrame({
-        'Type': ['Average Cost', 'Your Prediction'],
-        'Amount': [avg_cost, predicted_charge]
-    })
-    st.subheader("📈 Comparison with Average")
-    st.bar_chart(df.set_index('Type'))
-
-    # Download as CSV
-    st.subheader("📥 Download Your Prediction")
-    result_df = pd.DataFrame([{
-        "Age": age,
-        "Sex": sex,
-        "BMI": bmi,
-        "Children": children,
-        "Smoker": smoker,
-        "Region": region,
-        "Predicted Insurance Cost (₹)": f"{predicted_charge:,.2f}"
-    }])
-    csv = result_df.to_csv(index=False).encode('utf-8')
-    st.download_button("Download Result as CSV", csv, "insurance_result.csv", "text/csv")
+        st.warning("🚭 Tip: Quitting smoking can help lower your insurance costs and improve your health!")
+    else:
+        st.info("✅ Awesome! Being a non-smoker helps reduce your medical risks and insurance charges!")
 
 # Footer
 st.markdown("---")
-st.caption("Project by Madhumitha")
+st.caption("Project by Madhu Mitha")
