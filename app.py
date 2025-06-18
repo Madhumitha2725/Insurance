@@ -12,6 +12,11 @@ from sklearn.model_selection import train_test_split
 def train_model():
     df = pd.read_csv("Insurancepredc.csv")
 
+    # Standardize cases
+    df['sex'] = df['sex'].str.title()
+    df['smoker'] = df['smoker'].str.title()
+    df['region'] = df['region'].str.lower()
+
     # Label Encoding
     le_sex = LabelEncoder()
     le_region = LabelEncoder()
@@ -50,9 +55,12 @@ Welcome! Predict your expected **medical insurance charges** by entering the det
 </marquee>
 """, unsafe_allow_html=True)
 
-# Input form
+# Input form with wrapper box
 with st.form("prediction_form", clear_on_submit=False):
-   
+    st.markdown("""
+    <div style='border: 2px solid #4B8BBE; padding: 20px; border-radius: 10px; background-color: #f9f9f9;'>
+    """, unsafe_allow_html=True)
+
     st.subheader("🧾 Enter Personal Information")
 
     age = st.slider("🎂 Age", 18, 100, 30)
@@ -62,27 +70,36 @@ with st.form("prediction_form", clear_on_submit=False):
     smoker = st.radio("🚬 Smoker", ['Yes', 'No'], horizontal=True)
     region = st.selectbox("🌍 Region", ['southwest', 'southeast', 'northwest', 'northeast'])
 
-
+    st.markdown("</div>", unsafe_allow_html=True)
 
     submit = st.form_submit_button("🔍 Estimate Charges")
 
 # Prediction
 if submit:
-    # Encode inputs
-    sex_encoded = le_sex.transform([sex])[0]
-    smoker_encoded = le_smoker.transform([smoker])[0]
-    region_encoded = le_region.transform([region])[0]
+    try:
+        # Match encoding format
+        sex_input = sex.title()
+        smoker_input = smoker.title()
+        region_input = region.lower()
 
-    input_data = np.array([[age, sex_encoded, bmi, children, smoker_encoded, region_encoded]])
-    predicted_charge = model.predict(input_data)[0]
+        # Encode inputs
+        sex_encoded = le_sex.transform([sex_input])[0]
+        smoker_encoded = le_smoker.transform([smoker_input])[0]
+        region_encoded = le_region.transform([region_input])[0]
 
-    st.success(f"💸 Estimated Insurance Cost: ₹{predicted_charge:,.2f}")
+        input_data = np.array([[age, sex_encoded, bmi, children, smoker_encoded, region_encoded]])
+        predicted_charge = model.predict(input_data)[0]
 
-    if smoker.lower() == "yes":
-        st.warning("🚭 Tip: Quitting smoking can help lower your insurance costs and improve your health!")
-    else:
-        st.info("👏 Awesome! Being a non-smoker helps reduce your medical risks and insurance charges!")
+        st.success(f"💸 Estimated Insurance Cost: ₹{predicted_charge:,.2f}")
+
+        if smoker_input == "Yes":
+            st.warning("🚭 Tip: Quitting smoking can help lower your insurance costs and improve your health!")
+        else:
+            st.info("👏 Awesome! Being a non-smoker helps reduce your medical risks and insurance charges!")
+
+    except ValueError as e:
+        st.error("🚫 Error: There was an issue with input encoding. Please ensure valid values.")
 
 # Footer
 st.markdown("---")
-st.caption("Project by Madhu Mitha")
+st.caption("🔧 Project by Madhu Mitha")
