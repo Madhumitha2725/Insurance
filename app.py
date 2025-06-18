@@ -52,35 +52,23 @@ Welcome! predict your expected **medical insurance charges** by entering the det
 
 
 # Input section in an outlined box
-st.subheader("🔎 Personal & Lifestyle Information")
+with st.form("prediction_form", clear_on_submit=False):
+    st.markdown("""
+        <div style='border: 2px solid #4B8BBE; padding: 20px; border-radius: 10px; background-color: #f9f9f9;'>
+    """, unsafe_allow_html=True)
 
-with st.container():
-    st.markdown(
-        """
-        <style>
-        .styled-box {
-            border: 2px solid #ccc;
-            background-color: #f9f9f9;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        </style>
-        <div class="styled-box">
-        """,
-        unsafe_allow_html=True
-    )
+    st.subheader("🧾 Enter Personal Information")
 
-    # Input fields go here
-    age = st.number_input("🎂 Age", min_value=1, max_value=120, value=30)
-    sex = st.radio("👤 Sex", options=["male", "female"], horizontal=True)
-    bmi = st.number_input("⚖️ BMI (Body Mass Index)", min_value=10.0, max_value=50.0, value=25.0)
-    children = st.slider("👶 Number of Children", 0, 10, 0)
-    smoker = st.selectbox("🚬 Do you smoke?", ["yes", "no"])
-    region = st.selectbox("🌎 Region", ["southwest", "southeast", "northwest", "northeast"])
+    age = st.slider("🎂 Age", 18, 100, 30)
+    bmi = st.number_input("⚖️ BMI", min_value=10.0, max_value=50.0, value=25.0)
+    children = st.number_input("👶 Number of Children", min_value=0, max_value=10, step=1)
 
-    # Close the div
+    sex = st.radio("🧑 Sex", ['Male', 'Female'], horizontal=True)
+    smoker = st.radio("🚬 Smoker", ['Yes', 'No'], horizontal=True)
+
     st.markdown("</div>", unsafe_allow_html=True)
+
+    submit = st.form_submit_button("🔍 Estimate Charges")
 
 
 
@@ -99,7 +87,7 @@ if st.button("🔮 Predict Insurance Charges"):
     if smoker == "yes":
         st.warning("🚭 Tip: Quitting smoking can help lower your insurance costs and improve your health!")
     else:
-        st.info("✅ Awesome! Being a non-smoker helps reduce your medical risks and insurance charges!")
+        st.info("👏 Awesome! Being a non-smoker helps reduce your medical risks and insurance charges!")
 
 # Footer
 st.markdown("---")
